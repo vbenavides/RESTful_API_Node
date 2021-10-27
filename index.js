@@ -1,47 +1,31 @@
 const express = require('express');
+const routerApi = require('./routes');
+
+const {
+  logErrors,
+  errorHandler,
+  boomErrorHandler,
+} = require('./middlewares/error.handler');
 
 const app = express();
-
 const port = 3000;
 
+app.use(express.json());
+
 app.get('/', (req, res) => {
-  res.send('Server en Express');
+  res.send('Hola mi server en express');
 });
 
 app.get('/nueva-ruta', (req, res) => {
-  res.send('Esta es una nueva ruta');
+  res.send('Hola, soy una nueva ruta');
 });
 
-app.get('/products', (req, res) => {
-  res.json([
-    {
-      name: 'Product 1',
-      price: 1000,
-    },
-    {
-      name: 'Product 2',
-      price: 2000,
-    },
-  ]);
-});
+routerApi(app);
 
-app.get('/products/:id', (req, res) => {
-  const { id } = req.params;
-  res.json({
-    id,
-    name: 'Product 2',
-    price: 2000,
-  });
-});
-
-app.get('/categories/:categoryId/products/:productId', (req, res) => {
-  const { categoryId, productId } = req.params;
-  res.json({
-    categoryId,
-    productId,
-  });
-});
+app.use(logErrors);
+app.use(boomErrorHandler);
+app.use(errorHandler);
 
 app.listen(port, () => {
-  console.log('Port: ' + port);
+  console.log('Mi port' + port);
 });
